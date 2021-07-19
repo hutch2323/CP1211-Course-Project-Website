@@ -25,6 +25,17 @@ main {
     grid-column: 2 / 4;
 
     display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+
+    text-align: center;
+}
+
+div.triviaGame {
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+
+    display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr;
     grid-gap: 16px;
@@ -124,4 +135,15 @@ p.incorrect {
     background-color: red;
 }
 
+div.hidden {
+    display: none;
+}
+
+div.reveal {
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
