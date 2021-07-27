@@ -135,6 +135,11 @@ p.incorrect {
     background-color: red;
 }
 
+p.answer {
+    box-shadow: inset 0px 0px 0px 10px rgb(5, 161, 39);
+
+}
+
 div.hidden {
     display: none;
 }
