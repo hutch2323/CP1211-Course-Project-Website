@@ -57,6 +57,8 @@ let remainingQuestions = triviaQuestions.slice();
 let question = [];
 let playerScore = 0;
 let questionsAsked = 0;
+let currentQuestion = 0;
+let questionsLog = [[], [], [], [], [], [], [], [], [], []];
 
 const populateTriviaQuestion = () => {
     $("#next").disabled = true;
@@ -75,20 +77,33 @@ const populateTriviaQuestion = () => {
     const pElements = document.querySelectorAll("main div p");
     let choices = question.slice()
 
-    // remove the question, have only the four choices remaining in array
+    // remove the question, have only the four choices remaining in array. Add question to questionsLog array
+    questionsLog[questionsAsked][0] = choices[0];
     choices.splice(0, 1);
 
+    let count = 1;
     for(let element of pElements){
         let randomIndex = Math.floor(Math.random() * choices.length);
         let choice = choices.splice(randomIndex, 1);
         element.textContent = choice;
+        console.log(choice);
+        questionsLog[questionsAsked][count] = choice[0];
+        count++;
     }
+
+    // store answer in element 5 for questionsLog. Answer is always the first option in the question array (index 1)
+    questionsLog[questionsAsked][5] = question[1]
 
     for (let pElement of pElements) {
         pElement.addEventListener("click", toggle);
     } 
     
+    console.log(questionsLog[questionsAsked])
     console.log(question[0]);
+
+    for (let i = 0; i < questionsLog.length; i++){
+        console.log(questionsLog[i]);
+    }
 
     //return question;
 };
@@ -126,6 +141,7 @@ const checkForSelectedAnswer = () => {
         element.removeEventListener("click", toggle, false);
         if(element.className == "selected"){
             console.log(element.textContent);
+            questionsLog[questionsAsked][6] = element.textContent;
             if (element.textContent == question[1]){
                 element.className = "correct";
                 playerScore++;
@@ -143,6 +159,65 @@ const hideTriviaGame = () => {
     $(".hidden").className = "reveal";
     $(".triviaGame").className = "hidden";
     $(".reveal").firstChild.nextElementSibling.textContent = playerScore + " out of " + questionsAsked + " correct!";
+    for(let i = 0; i < questionsLog.length; i++){
+        console.log(i + " : " + questionsLog[i]);
+    }
+    
+}
+
+const loadQuestion = () => {
+    $("#next").disabled = false;
+    $("#confirm").disabled = true;
+
+    if(currentQuestion == 0){
+        $("#previous").disabled = true;
+    } else {
+        $("#previous").disabled = false;
+    }
+
+    $("#question").textContent = questionsLog[currentQuestion][0];
+
+    const pElements = document.querySelectorAll("main div p");
+    let selection = questionsLog[currentQuestion][6];
+    console.log("Selection: " + selection);
+
+    let count = 1;
+    for(let element of pElements){
+        element.className = "";
+        element.textContent = questionsLog[currentQuestion][count];
+        count++;
+    }
+
+    if(selection){ 
+    
+        for(let element of pElements){
+            if (element.textContent == selection){
+                element.className = "selected";
+            }
+        }
+        let answer = questionsLog[currentQuestion][5]
+        console.log("Answer: " + answer);
+        // check to see which element has been selected
+        for (let element of pElements) {
+            element.removeEventListener("click", toggle, false);
+            if(element.className == "selected"){
+                if (element.textContent == answer){
+                    element.className = "correct";
+                } else {
+                    element.className = "incorrect";
+                }
+            }
+            if ((element.className != "correct") && (element.textContent == answer)){
+                element.className = "answer";
+            }
+        }
+    } else {
+        for (let pElement of pElements) {
+            pElement.addEventListener("click", toggle);
+        } 
+        $("#confirm").disabled = true;
+        $("#next").disabled = true;
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -151,18 +226,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const pElements = document.querySelectorAll("main div p");
 
     $("#next").addEventListener("click", () => {
-        if (questionsAsked < 10){
+        // if there are less than 10 questions (counter starts at 0) asked and the current question to be asked has not yet been shown
+        if ((questionsAsked < 10) && (questionsLog[questionsAsked][0] == null)){
             for (let pElement of pElements) {
                 pElement.className = ""
             }
+            currentQuestion++;
             populateTriviaQuestion();
-        }
-        else{
+        // if less than 10 questions are asked and the current question has already been shown and entered into the questionsLog
+        } else if ((questionsAsked < 10) && (questionsLog[questionsAsked][0] != null)){
+            currentQuestion++;
+            loadQuestion();
+        // if more than 10 questions have been asked, hide the trivia game
+        } else {
             hideTriviaGame();
         }
     });
 
-    $("#test").addEventListener("click", hideTriviaGame);
+    $("#previous").addEventListener("click", () => {
+        currentQuestion--;
+        loadQuestion();
+    });
 
     // event handler for the confirm button
     $("#confirm").addEventListener("click", checkForSelectedAnswer);
