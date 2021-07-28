@@ -60,6 +60,10 @@ let questionsAsked = 0;
 let currentQuestion = 0;
 let questionsLog = [[], [], [], [], [], [], [], [], [], []];
 
+// set up an array of all div elements within the trivia gamethat are used for the trivia answers. 
+// Do not include the question div or the message div.
+const divElements = document.querySelectorAll(".triviaGame div:not(#triviaQuestion):not(#message)");
+
 const populateTriviaQuestion = () => {
     $("#next").disabled = true;
     $("#confirm").disabled = true;
@@ -74,7 +78,12 @@ const populateTriviaQuestion = () => {
 
     remainingQuestions.splice(number, 1);
 
-    const pElements = document.querySelectorAll("main div p");
+    //const divElements = document.querySelectorAll(".triviaGame div:not(#triviaQuestion):not(#message)");
+    /* for(let element of divElements){
+        if ( element.id == "triviaQuestion") { 
+            divElements.splice(element, 1); 
+        }
+    } */
     let choices = question.slice()
 
     // remove the question, have only the four choices remaining in array. Add question to questionsLog array
@@ -82,7 +91,7 @@ const populateTriviaQuestion = () => {
     choices.splice(0, 1);
 
     let count = 1;
-    for(let element of pElements){
+    for(let element of divElements){
         let randomIndex = Math.floor(Math.random() * choices.length);
         let choice = choices.splice(randomIndex, 1);
         element.textContent = choice;
@@ -94,8 +103,8 @@ const populateTriviaQuestion = () => {
     // store answer in element 5 for questionsLog. Answer is always the first option in the question array (index 1)
     questionsLog[questionsAsked][5] = question[1]
 
-    for (let pElement of pElements) {
-        pElement.addEventListener("click", toggle);
+    for (let divElement of divElements) {
+        divElement.addEventListener("click", toggle);
     } 
     
     console.log(questionsLog[questionsAsked])
@@ -110,22 +119,22 @@ const populateTriviaQuestion = () => {
 
 // the event handler for the click event of each h2 element
 const toggle = evt => {
-    const pElementSelected = evt.currentTarget;              // get the clicked p element
+    const divElementSelected = evt.currentTarget;              // get the clicked div element
 
     // create an array of all the p elements within a div inside of main
-    const pElements = document.querySelectorAll("main div p");
+    //const divElements = document.querySelectorAll(".triviaGame div");
 
     // reset all previously selected options
-    for (let element of pElements) {
+    for (let element of divElements) {
         element.className = "";
     }
 
     // highlight the selected option
-    if(pElementSelected.className == "selected"){
-        pElementSelected.className = "";
+    if(divElementSelected.className == "selected"){
+        divElementSelected.className = "";
     } else {
-        pElementSelected.className = "selected";
-        console.log(pElementSelected.textContent);
+        divElementSelected.className = "selected";
+        console.log(divElementSelected.firstChild.textContent)
     }
 
     $("#confirm").disabled = false;
@@ -133,11 +142,11 @@ const toggle = evt => {
 
 const checkForSelectedAnswer = () => {
     // create an array of all the p elements within a div inside of main
-    const pElements = document.querySelectorAll("main div p");
+    //const divElements = document.querySelectorAll(".triviaGame div");
     console.log(question);
 
     // check to see which element has been selected
-    for (let element of pElements) {
+    for (let element of divElements) {
         element.removeEventListener("click", toggle, false);
         if(element.className == "selected"){
             console.log(element.textContent);
@@ -177,12 +186,12 @@ const loadQuestion = () => {
 
     $("#question").textContent = questionsLog[currentQuestion][0];
 
-    const pElements = document.querySelectorAll("main div p");
+    //const divElements = document.querySelectorAll(".triviaGame div");
     let selection = questionsLog[currentQuestion][6];
     console.log("Selection: " + selection);
 
     let count = 1;
-    for(let element of pElements){
+    for(let element of divElements){
         element.className = "";
         element.textContent = questionsLog[currentQuestion][count];
         count++;
@@ -190,7 +199,7 @@ const loadQuestion = () => {
 
     if(selection){ 
     
-        for(let element of pElements){
+        for(let element of divElements){
             if (element.textContent == selection){
                 element.className = "selected";
             }
@@ -198,7 +207,7 @@ const loadQuestion = () => {
         let answer = questionsLog[currentQuestion][5]
         console.log("Answer: " + answer);
         // check to see which element has been selected
-        for (let element of pElements) {
+        for (let element of divElements) {
             element.removeEventListener("click", toggle, false);
             if(element.className == "selected"){
                 if (element.textContent == answer){
@@ -212,8 +221,8 @@ const loadQuestion = () => {
             }
         }
     } else {
-        for (let pElement of pElements) {
-            pElement.addEventListener("click", toggle);
+        for (let divElement of divElements) {
+            divElement.addEventListener("click", toggle);
         } 
         $("#confirm").disabled = true;
         $("#next").disabled = true;
@@ -223,13 +232,13 @@ const loadQuestion = () => {
 document.addEventListener("DOMContentLoaded", () => {
     // get the p tags
     populateTriviaQuestion();
-    const pElements = document.querySelectorAll("main div p");
+    //const divElements = document.querySelectorAll(".triviaGame div");
 
     $("#next").addEventListener("click", () => {
         // if there are less than 10 questions (counter starts at 0) asked and the current question to be asked has not yet been shown
         if ((questionsAsked < 10) && (questionsLog[questionsAsked][0] == null)){
-            for (let pElement of pElements) {
-                pElement.className = ""
+            for (let divElement of divElements) {
+                divElement.className = ""
             }
             currentQuestion++;
             populateTriviaQuestion();
@@ -253,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       
     // attach event handler for each p tag	    
-    for (let pElement of pElements) {
-        pElement.addEventListener("click", toggle);
+    for (let divElement of divElements) {
+        divElement.addEventListener("click", toggle);
     }    
 });
