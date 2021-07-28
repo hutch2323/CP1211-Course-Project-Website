@@ -6,23 +6,24 @@
 body {
     font-family: Verdana, Arial, Helvetica, sans-serif;
     margin: 0px;
-    height: 600px;
+    height: 100%;
     width: 100%;
     display: grid;
-    grid-template-columns: 200px 1fr 1fr 1fr;
-    grid-template-rows: 80px 1fr 1fr 1fr 1fr 60px;
+    grid-template-columns: 1fr 800px 1fr;
+    grid-template-rows: 200px 100px 100px 100px 100px 100px;
     grid-gap: 16px;
 }
 
 header {
     grid-row: 1 / 2;
-    grid-column: 1 / 5;
+    grid-column: 1 / 4;
     background-color:aqua
 }
 
 main {
+    width: 100%;
     grid-row: 2 / 6;
-    grid-column: 2 / 4;
+    grid-column: 2 / 3;
 
     display: grid;
     grid-template-columns: 1fr;
@@ -41,6 +42,14 @@ div.triviaGame {
     grid-gap: 16px;
 
     text-align: center;
+    background-color: black;
+}
+
+.triviaGame div{
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    background-color: wheat;
 }
 
 #leftSide {
@@ -60,14 +69,14 @@ div.triviaGame {
 
 #rightSide {
     grid-row: 2 / 6;
-    grid-column: 4 / 5;
+    grid-column: 3 / 4;
     background-color:chartreuse;
 }
 
 #optionA {
     grid-row: 2 / 3;
     grid-column: 1 / 2;
-    background-color: chocolate;
+    /* background-color: chocolate; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -76,7 +85,7 @@ div.triviaGame {
 #optionB {
     grid-row: 2 / 3;
     grid-column: 2 / 3;
-    background-color: crimson;
+    /* background-color: crimson; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -85,7 +94,7 @@ div.triviaGame {
 #optionC {
     grid-row: 3 / 4;
     grid-column: 1 / 2;
-    background-color: darkgoldenrod;
+    /* background-color: darkgoldenrod; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -94,7 +103,7 @@ div.triviaGame {
 #optionD {
     grid-row: 3 / 4;
     grid-column: 2 / 3;
-    background-color: darksalmon;
+    /* background-color: darksalmon; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -111,7 +120,7 @@ div.triviaGame {
 
 footer {
     grid-row: 6 / 7;
-    grid-column: 1 / 5;
+    grid-column: 1 / 4;
     background-color: aqua;
 }
 
@@ -121,21 +130,25 @@ main div p {
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 1px;
 }
 
-p.selected {
+div.selected {
     background-color: yellow;
 }
 
-p.correct {
+div.correct {
     background-color: rgb(5, 161, 39);
 }
 
-p.incorrect {
+div.incorrect {
     background-color: red;
 }
 
-p.answer {
+div.answer {
     box-shadow: inset 0px 0px 0px 10px rgb(5, 161, 39);
 
 }
