@@ -9,15 +9,50 @@
 
 <body>
     <header>
-        <img src="images/banner.png">
+        <div>
+            <img src="images/banner.png">
+        </div>
+        
+        <div class="scoreboard">
+            <div class="scoreInfo">
+                <div class="homeTeam">
+                    <div class="teamLabel" id="homeLabel">
+                        CORRECT
+                    </div>
+                    <div class="teamScore" id="homeScore">
+                        
+                    </div>
+                </div>
+                <div class="questionsRemaining">
+                    <div class="qrLabel">
+
+                    </div>
+                    <div class="qrDisplay" id="qrDisplay">
+
+                    </div>
+                </div>
+                <div class="awayTeam">
+                    <div class="teamLabel" id="awayLabel">
+                        INCORRECT
+                    </div>
+                    <div class="teamScore" id="awayScore">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
     <aside id="leftSide">
 
     </aside>
     <main id="triva">
         <div class="hidden">
-            <h1></h1>
-            <h2></h2>
+            <div class="resultImage">
+                <img id="result" src="images/goal.gif" alt="images/no-goal.gif" >
+            </div>
+            <div class="resultText">
+                <h2></h2>
+            </div>
         </div>
         <div class="triviaGame">
             <div id="triviaQuestion">
@@ -36,9 +71,12 @@
                 
             </div>
             <div id="message">
-                <input type="button" id="previous" value="Previous">
-                <input type="button" id="confirm" value="Confirm">
-                <input type="button" id="next" value="Next Question">
+                <!--<input type="button" id="previous" value="Previous">-->
+                <img src="images/arrowBack.png" id="previous" alt="Back">
+                <!--<input type="button" id="confirm" value="Confirm">-->
+                <img src="images/confirm.png" id="confirm" alt="Confirm">
+                <img src="images/arrowProceed.png" id="next" alt="Next">
+               <!--<input type="button" id="next" value="Next Question">-->
             </div>
         </div>
     </main>
