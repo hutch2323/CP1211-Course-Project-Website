@@ -62,6 +62,7 @@ let questionsLog = [[], [], [], [], [], [], [], [], [], []];
 
 let incorrectAnswers = 0;
 let questionsRemaining = 10;
+let questionCount = 0;
 
 const goal = $("#result").src;
 const noGoal = $("#result").alt;
@@ -84,7 +85,16 @@ const populateTriviaQuestion = () => {
 
 
     questionsRemaining--;
-    $("#qrDisplay").textContent = questionsRemaining;
+    questionCount = 10 - questionsRemaining;
+    $("#qrDisplay p").textContent = questionCount;
+
+    // work around for custom scoreboard font being offset when the question # is 1
+    if (questionCount == 1){
+        $("#qrDisplay p").style.padding = "0 10px 0 0";
+    }
+    else {
+        $("#qrDisplay p").style.padding = "0px";
+    }
 
     let number = Math.floor(Math.random() * remainingQuestions.length);
     question = remainingQuestions[number];
@@ -142,6 +152,8 @@ const optionSelected = evt => {
     // create an array of all the p elements within a div inside of main
     //const divElements = document.querySelectorAll(".triviaGame div");
 
+    $("#previous").removeEventListener("click", previousQuestion);
+
     // reset all previously selected options
     for (let element of divElements) {
         element.className = "";
@@ -177,15 +189,32 @@ const checkForSelectedAnswer = () => {
             if (element.textContent == question[1]){
                 element.className = "correct";
                 playerScore++;
-                $("#homeScore").textContent = playerScore;
                 displayResult(true);
                 setTimeout(showTriviaGame, 2000);
+                // work around for custom scoreboard font being offset when the score is 1
+                console.log(playerScore);
+                if (playerScore == 1){
+                    $("#homeScore p").style.padding = "0 25px 0 0";
+                }
+                else {
+                    $("#homeScore p").style.padding = "0px";
+                }
+
+                $("#homeScore p").textContent = playerScore;
             } else {
                 element.className = "incorrect";
                 incorrectAnswers++;
-                $("#awayScore").textContent = incorrectAnswers;
                 displayResult(false);
-                setTimeout(showTriviaGame, 2000);
+                setTimeout(showTriviaGame, 2000);  
+                console.log(incorrectAnswers);
+                // work around for custom scoreboard font being offset when the score is 1
+                if (incorrectAnswers == 1){
+                    $("#awayScore p").style.padding = "0 25px 0 0";
+                }
+                else {
+                    $("#awayScore p").style.padding = "0px";
+                }
+                $("#awayScore p").textContent = incorrectAnswers;
             }
         }
         if ((element.textContent == question[1]) && !(element.className == "correct")){
@@ -336,11 +365,11 @@ document.addEventListener("DOMContentLoaded", () => {
     //$("#previous").addEventListener("click", previousQuestion);
 
     // event handler for the confirm button
-    $("#confirm").addEventListener("click", checkForSelectedAnswer);
+    //$("#confirm").addEventListener("click", checkForSelectedAnswer);
 
     // initialize scoreboard
-    $("#awayScore").textContent = incorrectAnswers;
-    $("#homeScore").textContent = playerScore;
+    $("#awayScore p").textContent = incorrectAnswers;
+    $("#homeScore p").textContent = playerScore;
 
       
     // attach event handler for each div tag	    
