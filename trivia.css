@@ -1,6 +1,18 @@
+@font-face { 
+    font-family: 'Scoreboard'; 
+    src: url('fonts/CursedTimerUlil-Aznm.ttf'); 
+} 
+
 * {
     margin: 0;
     padding: 0;
+}
+
+p {
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
 }
 
 body {
@@ -211,7 +223,6 @@ div.scoreInfo{
     height: 100%;
     justify-content: center;
     align-items: center;
-    background-color: brown;
 }
 
 
@@ -220,7 +231,6 @@ div.homeTeam {
     flex-direction: column;
     /*margin: 0px 10px;*/
     text-align: center;
-    background-color: blueviolet;
     height: 100%;
     width: 35%;
     vertical-align: middle;
@@ -230,11 +240,11 @@ div.homeTeam {
 }
 
 div.questionsRemaining{
+    font-family: Verdana, Arial, Helvetica, sans-serif;
     display: flex;
     flex-direction: column;
     /*margin: 0px 10px;*/
     text-align: center;
-    background-color: rgb(43, 226, 89);
     height: 100%;
     width: 20%;
     vertical-align: middle;
@@ -247,7 +257,6 @@ div.awayTeam{
     flex-direction: column;
     /*margin: 0px 10px;*/
     text-align: center;
-    background-color: blueviolet;
     height: 100%;
     width: 35%;
     vertical-align: middle;
@@ -258,44 +267,104 @@ div.awayTeam{
 
 .teamLabel{
     display: flex;
-    width: 60%;
+    width: 75%;
     height: 15%;
-    background-color:burlywood;
+    background-color:#1e1e1f;
     margin-bottom: 10px;
     text-align: center;
     justify-content: center;
     align-items: center;
+    color: white;
+    box-shadow:
+        inset 0 0 2px 0 rgba(255,255,255,.4),
+        inset 0 0 3px 0 rgba(0,0,0,.4),
+        inset 0 0 3px 5px rgba(0,0,0,.05),
+        2px 2px 4px 0 rgba(0,0,0,.25);
+    border-radius: 4px;
+
 }
 
 .teamScore{
+    font-family: Scoreboard, Verdana, Arial, Helvetica, sans-serif;
     display: flex;
-    width: 60%;
+    width: 70%;
     height: 50%;
-    background-color:darkblue;
+    background-color:#1e1e1f;
     text-align: center;
     justify-content: center;
     align-items: center;
+    vertical-align: middle;
     font-size: 5em;
+    color: #d92223;
+    /*box-shadow: inset 0px -5px 1px #292929, 6px 7px 3px rgba(66, 66, 66, 0.5);*/
+
+   /* border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    box-shadow: 0 -1px 2px 0 rgba(0,0,0,.15); */
+    box-shadow:
+        inset 0 0 2px 0 rgba(255,255,255,.4),
+        inset 0 0 3px 0 rgba(0,0,0,.4),
+        inset 0 0 3px 5px rgba(0,0,0,.05),
+        2px 2px 4px 0 rgba(0,0,0,.25);
+    border-radius: 4px;
+    /*padding-top: 15px;*/
+}
+
+.teamScore p{
+    display: flex;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    vertical-align: middle;
+    font-size: 1em;
+    line-height: 1.2em;
 }
 
 .qrLabel{
     display: flex;
     width: 60%;
     height: 15%;
-    background-color:burlywood;
+    background-color:#1e1e1f;
+    margin-top: 25px;
     margin-bottom: 10px;
     text-align: center;
     justify-content: center;
     align-items: center;
+    color: white;
+    box-shadow:
+        inset 0 0 2px 0 rgba(255,255,255,.4),
+        inset 0 0 3px 0 rgba(0,0,0,.4),
+        inset 0 0 3px 5px rgba(0,0,0,.05),
+        2px 2px 4px 0 rgba(0,0,0,.25);
+    border-radius: 4px;
 }
 
 .qrDisplay{
+    font-family: Scoreboard, Verdana, Arial, Helvetica, sans-serif;
     display: flex;
     width: 60%;
-    height: 50%;
-    background-color:darkblue;
+    height: 30%;
     text-align: center;
     justify-content: center;
     align-items: center;
-    font-size: 5em;
+    color: #ee9446;
+    background-color:#1e1e1f;
+    box-shadow:
+        inset 0 0 2px 0 rgba(255,255,255,.4),
+        inset 0 0 3px 0 rgba(0,0,0,.4),
+        inset 0 0 3px 5px rgba(0,0,0,.05),
+        2px 2px 4px 0 rgba(0,0,0,.25);
+    border-radius: 4px;
+}
+
+.qrDisplay p {
+    display: flex;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    vertical-align: middle;
+    font-size: 2em;
+    line-height: 1.75em;
 }
