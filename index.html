@@ -44,18 +44,42 @@
         </div>
     </header>
     <aside id="leftSide">
-
+        <img src="images/spotlightStandingFlipped.png">
     </aside>
     <main id="triva">
-        <div class="hidden">
-            <div class="resultImage">
+        <div class="reveal" id="reveal">
+            <div class="resultImage" id="resultImage">
                 <img id="result" src="images/goal.gif" alt="images/no-goal.gif" >
             </div>
             <div class="resultText">
+                <h1>Incorrect</h1>
                 <h2></h2>
+                <h3></h3>
+                <h4></h4>
+                <p class="reviewQuiz" id="reviewQuiz"></p>
             </div>
         </div>
-        <div class="triviaGame">
+        <div class="welcome" id="welcome">
+            <h1>Welcome to Hockey Trivia</h1>
+            <div id="rules">
+                <h2>Rules/Instructions:</h2>
+                <ul>
+                    <li>There will be a total of 10 randomly selected questions</li>
+                    <li>To select an answer, click an option and then click the confirm button below</li>
+                    <li>Once an option is selected, it will turn yellow to indicate the selection</li>
+                    <li>You may only change your selection prior to clicking the confirm button</li>
+                    <li>Once a selection is confirmed, it will either turn green (correct) or red (incorrect)</li>
+                    <li>If you select the incorrect answer, the correct answer will be displayed with a green border</li>
+                    <li>You can check previously answered questions by using the back arrow below the quiz</li>
+                    <li>Once 10 questions have been answered, your overall score will be shown</li>
+                
+                </ul>
+            </div>
+            <div id="startQuiz">
+                <p>Start Quiz</p>
+            </div>
+        </div>
+        <div class="triviaGame" id="triviaGame">
             <div id="triviaQuestion">
                 <h3 id="question"></h3>
             </div>
@@ -82,10 +106,15 @@
         </div>
     </main>
     <aside id="rightSide">
-
+        <img src="images/spotlightStanding.png">
     </aside>
     <footer>
-
+        <img src="images/spotlightFloorFlipped.png">
+        <img src="images/spotlightFloorFlipped.png">
+        <img src="images/spotlightFloorFlipped.png">
+        <img src="images/spotlightFloor.png">
+        <img src="images/spotlightFloor.png">
+        <img src="images/spotlightFloor.png">
     </footer>
     <script src="trivia.js"></script>
 </body>
