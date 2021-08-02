@@ -41,7 +41,7 @@ const triviaQuestions = [["Who scored the very first goal in NHL history?", "Dav
                         ["What's the most goals scored in a season by a rookie", "76", "78", "74", "72"],
                         ["Who holds the record for the most Stanley Cups as a player?", "Henri Richard", "Wayne Gretzky", "Guy Lafleur", "Brian Trottier"],
                         ["Who is the only player to score five goals five different ways in one game?", "Mario Lemieux", "Wayne Gretzky", "Sidney Crosby", "Gordie Howe"],
-                        ["Who was the first goalie to be credited with a goal in NHL history?", "Bobby Smith", "Grant Fuhr", "Ron Hextall", "Andy Moog"],
+                        ["Who was the first goalie to be credited with a goal in NHL history?", "Billy Smith", "Grant Fuhr", "Ron Hextall", "Andy Moog"],
                         ["In which year did the NHL officially start?", "1917", "1912", "1921", "1924"],
                         ["What NHL team did not participate in the 1983 entry draft?", "St. Louis Blues", "Edmonton Oilers", "Montreal Canadiens", "Hartford Whalers"],
                         ["What team holds the record for the most shots on goal in one game?", "Boston Bruins", "Washington Capitals", "Edmonton Oilers", "Montreal Canadiens"],
@@ -67,6 +67,8 @@ let questionCount = 0;
 const goal = $("#result").src;
 const noGoal = $("#result").alt;
 
+let isReview = false;
+
 // set up an array of all div elements within the trivia gamethat are used for the trivia answers. 
 // Do not include the question div or the message div.
 const divElements = document.querySelectorAll(".triviaGame div:not(#triviaQuestion):not(#message)");
@@ -86,19 +88,19 @@ const populateTriviaQuestion = () => {
 
     questionsRemaining--;
     questionCount = 10 - questionsRemaining;
+
     $("#qrDisplay p").textContent = questionCount;
 
     // work around for custom scoreboard font being offset when the question # is 1
-    if (questionCount == 1){
+    if ((questionCount == 1) || (questionCount == 10)) {
         $("#qrDisplay p").style.padding = "0 10px 0 0";
-    }
-    else {
-        $("#qrDisplay p").style.padding = "0px";
+    } else {
+        $("#qrDisplay p").style.padding = "0px 0px 0px 0px";
     }
 
     let number = Math.floor(Math.random() * remainingQuestions.length);
     question = remainingQuestions[number];
-    $("#question").textContent = question[0];
+    $("#question").textContent = questionCount + ". " + question[0];
     /* $("#a").textContent = question[1];
     $("#b").textContent = question[2];
     $("#c").textContent = question[3];
@@ -195,9 +197,10 @@ const checkForSelectedAnswer = () => {
                 console.log(playerScore);
                 if (playerScore == 1){
                     $("#homeScore p").style.padding = "0 25px 0 0";
-                }
-                else {
-                    $("#homeScore p").style.padding = "0px";
+                } else if (playerScore == 10){
+                    $("#homeScore p").style.padding = "0 25px 0 0";
+                } else {
+                    $("#homeScore p").style.padding = "0px 0px 0px 0px";
                 }
 
                 $("#homeScore p").textContent = playerScore;
@@ -205,14 +208,14 @@ const checkForSelectedAnswer = () => {
                 element.className = "incorrect";
                 incorrectAnswers++;
                 displayResult(false);
-                setTimeout(showTriviaGame, 2000);  
+                setTimeout(showTriviaGame, 2000); 
                 console.log(incorrectAnswers);
                 // work around for custom scoreboard font being offset when the score is 1
-                if (incorrectAnswers == 1){
+                if ((incorrectAnswers == 1) || (incorrectAnswers == 10)){
                     $("#awayScore p").style.padding = "0 25px 0 0";
                 }
                 else {
-                    $("#awayScore p").style.padding = "0px";
+                    $("#awayScore p").style.padding = "0px 0px 0px 0px";
                 }
                 $("#awayScore p").textContent = incorrectAnswers;
             }
@@ -230,17 +233,50 @@ const hideTriviaGame = () => {
     $(".hidden").className = "reveal";
     $(".triviaGame").className = "hidden";
     //$("#result").display.none;
-    $(".resultImage").className = "hidden";
+    $("#resultImage").className = "hidden";
+    $('#reviewQuiz').className = "reviewQuiz";
+    $(".resultText h1").textContent = "Quiz Complete!"
     $(".resultText h2").textContent = playerScore + " out of " + questionsAsked + " correct!";
+    $(".resultText h3").textContent = playerScore + "/" + questionsAsked + " = " + playerScore/questionsAsked*100 + "%";
+
+    let playerMessage = "";
+    if (playerScore <=2){
+        playerMessage = "Awful performance. Time to head back to training camp!";
+    } else if (playerScore < 5) {
+        playerMessage = "Poor performance. Maybe listen to the coach next time!";
+    } else if (playerScore == 5){
+        playerMessage = "Decent performance, but it could use improvement!"
+    } else if (playerScore <= 7){
+        playerMessage = "Good job! The coach is impressed!"
+    } else if (playerScore <= 9) {
+        playerMessage = "Great job! You're on the path to become a superstar!"
+    } else if (playerScore == 10) {
+        playerMessage = "Amazing job! You're on track to make the Hall-of-Fame!"
+    }
+
+    $(".resultText h4").textContent = playerMessage;
+
+    $(".resultText p").textContent = "Review Quiz";
+
+    $(".resultText p").addEventListener("click", reviewQuiz);
     for(let i = 0; i < questionsLog.length; i++){
         console.log(i + " : " + questionsLog[i]);
     }
     
 }
 
+const reviewQuiz = () => {
+    currentQuestion = 0;
+    isReview = true;
+    loadQuestion();
+    $("#next").addEventListener("click", nextQuestion);
+    showTriviaGame();
+}
+
 const showTriviaGame = () => {
-    $(".hidden").className = "triviaGame";
-    $(".reveal").className = "hidden";  
+    $("#triviaGame").className = "triviaGame";
+    $("#reveal").className = "hidden";
+    $("#welcome").className = "hidden"  
 }
 
 const loadQuestion = () => {
@@ -262,7 +298,7 @@ const loadQuestion = () => {
         $("#previous").addEventListener("click", previousQuestion);
     }
 
-    $("#question").textContent = questionsLog[currentQuestion][0];
+    $("#question").textContent = currentQuestion + 1 + ". " + questionsLog[currentQuestion][0];
 
     //const divElements = document.querySelectorAll(".triviaGame div");
     let selection = questionsLog[currentQuestion][6];
@@ -321,11 +357,14 @@ const nextQuestion = () => {
             currentQuestion++;
             populateTriviaQuestion();
         // if less than 10 questions are asked and the current question has already been shown and entered into the questionsLog
-        } else if ((questionsAsked < 10) && (questionsLog[questionsAsked][0] != null)){
+        // or the quiz is being reviewed and not on the 10th question
+        } else if (((questionsAsked < 10) && (questionsLog[questionsAsked][0] != null)) || ((isReview) && (currentQuestion != 9))){
             currentQuestion++;
             loadQuestion();
-        // if more than 10 questions have been asked, hide the trivia game
-        } else {
+        // if 10 questions have been asked and the quiz is not being reviewed
+        // or if the quiz is being reviewed and currently on the 10th question, hide the trivia game
+        } else if ((!isReview) || ((isReview) && (currentQuestion == 9))){
+            isReview = false;
             hideTriviaGame();
         }
 }
@@ -342,11 +381,11 @@ const displayResult = isCorrect => {
     
     if(isCorrect){
         $("#result").src = goal;
-        $(".resultText h2").textContent = "Correct!";
+        $(".resultText h1").textContent = "Correct!";
         //$(".reveal").firstChild.nextElementSibling.nextElementSibling.textContent = "Correct!";
     } else {
         $("#result").src = noGoal;        
-        $(".resultText h2").textContent = "Incorrect!";
+        $(".resultText h1").textContent = "Incorrect!";
         //$(".reveal").firstChild.nextElementSibling.nextElementSibling.textContent = "Incorrect!";
     }
 
@@ -367,10 +406,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // event handler for the confirm button
     //$("#confirm").addEventListener("click", checkForSelectedAnswer);
 
+    $("#reveal").className = "hidden";
+    $("#triviaGame").className = "hidden";
+    $('.reviewQuiz').className = "hidden";
+
+    //$("#welcome").className = "hidden";
+
+
+
+    $("#startQuiz").addEventListener("click", showTriviaGame);
+
     // initialize scoreboard
     $("#awayScore p").textContent = incorrectAnswers;
     $("#homeScore p").textContent = playerScore;
-
       
     // attach event handler for each div tag	    
     for (let divElement of divElements) {
