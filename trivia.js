@@ -1,7 +1,9 @@
 "use strict";
 
+// function used to select a particular html element
 const $ = selector => document.querySelector(selector);
 
+// 2D array used to hold all of the trivia questions. The answer to each question is stored in the 2nd index of that array
 const triviaQuestions = [["Who scored the very first goal in NHL history?", "Dave Ritchie", "Harry Hyland", "Joe Malone", "Eddie Gerard"],
                         ["Who was the first NHL commissioner?", "Gary Bettman", "Red Dutton", "Frank Calder", "Clarence Campbell"],
                         ["Who roared to NHL stardom as \"the Golden Jet\"?", "Bobby Hull", "Bobby Orr", "Gordie Howe", "Wayne Gretzky"],
@@ -53,148 +55,104 @@ const triviaQuestions = [["Who scored the very first goal in NHL history?", "Dav
                         ["Who had the second most points throughout the 80s, behind Wayne Gretzky?", "Peter Stastny", "Mark Messier", "Mike Bossy", "Mario Lemieux"],
                         ["Which player was responsible for pushing for the NHL player's association", "Ted Lindsay", "Gordie Howe", "Serge Savard", "Maurice Richard"]];
 
-let remainingQuestions = triviaQuestions.slice();
-let question = [];
-let playerScore = 0;
-let questionsAsked = 0;
-let currentQuestion = 0;
-let questionsLog = [[], [], [], [], [], [], [], [], [], []];
+let question = []; // array used to hold the current question
+let playerScore = 0; // variable used to hold the number of correct answers
+let incorrectAnswers = 0; // variable used to hold the number of incorrect answers
+let questionsAsked = 0; // variable used to count the number of questions asked to the user
+let currentQuestion = 0; // variable used to hold the number of the current question being displayed
+let questionsLog = [[], [], [], [], [], [], [], [], [], []]; // array used to hold the questions that have been previously asked during the quiz
+let questionsRemaining = 10; // variable used to hold the number of questions to be asked that are remaining. Initialized to 10
+let questionCount = 0; // variable that holds the number of questions asked to display on the scoreboard
+const goal = $("#result").src; // variable used to hold the .gif file that plays when user gets a correct answer
+const noGoal = $("#result").alt; // variable used to hold the .gif file that plays when user guesses the wrong answe
+let isReview = false; // boolean variable used when the user reviews their quiz. Set to false if not "reviewing"
 
-let incorrectAnswers = 0;
-let questionsRemaining = 10;
-let questionCount = 0;
-
-const goal = $("#result").src;
-const noGoal = $("#result").alt;
-
-let isReview = false;
-
-// set up an array of all div elements within the trivia gamethat are used for the trivia answers. 
+// set up an array of all div elements within the trivia game that are used for the trivia answers. 
 // Do not include the question div or the message div.
 const divElements = document.querySelectorAll(".triviaGame div:not(#triviaQuestion):not(#message)");
 
+// function that is called to display a new trivia question on the screen
 const populateTriviaQuestion = () => {
-    //$("#next").disabled = true; // disable 'next' event listener
+    // remove event listeners for the next and confirm buttons
     $("#next").removeEventListener("click", nextQuestion);
-    //$("#confirm").disabled = true;
     $("#confirm").removeEventListener("click", checkForSelectedAnswer);
-
+    // if the question being asked is not first question of the quiz
     if(questionsAsked > 0){
+        // add event listener for the previous button
         $("#previous").addEventListener("click", previousQuestion);
-    } else {
+    } else { // if it is the first question
+        // remove event listener for the previous button
         $("#previous").removeEventListener("click", previousQuestion);
     }
-
-
-    questionsRemaining--;
-    questionCount = 10 - questionsRemaining;
-
+    questionsRemaining--; // decrease the questionsRemaining counter by 1
+    questionCount = 10 - questionsRemaining; // determine question count
+   // display the question count to the scoreboard
     $("#qrDisplay p").textContent = questionCount;
-
     // work around for custom scoreboard font being offset when the question # is 1
     if ((questionCount == 1) || (questionCount == 10)) {
         $("#qrDisplay p").style.padding = "0 10px 0 0";
     } else {
         $("#qrDisplay p").style.padding = "0px 0px 0px 0px";
     }
-
-    let number = Math.floor(Math.random() * remainingQuestions.length);
-    question = remainingQuestions[number];
-    $("#question").textContent = questionCount + ". " + question[0];
-    /* $("#a").textContent = question[1];
-    $("#b").textContent = question[2];
-    $("#c").textContent = question[3];
-    $("#d").textContent = question[4]; */
-
-    remainingQuestions.splice(number, 1);
-
-    //const divElements = document.querySelectorAll(".triviaGame div:not(#triviaQuestion):not(#message)");
-    /* for(let element of divElements){
-        if ( element.id == "triviaQuestion") { 
-            divElements.splice(element, 1); 
-        }
-    } */
-    let choices = question.slice();
-
+    let number = Math.floor(Math.random() * triviaQuestions.length); // generate a random number (0-49)
+    question = triviaQuestions[number]; // grab a question from triviaQuestion using the random number as an index
+    // display the question number as well as the question in the trivia game section
+    $("#question").textContent = questionCount + ". " + question[0]; 
+    triviaQuestions.splice(number, 1); // remove the question from the triviaQuestions array
+    let choices = question.slice(); // copy question array to a new array
     // remove the question, have only the four choices remaining in array. Add question to questionsLog array
     questionsLog[questionsAsked][0] = choices[0];
     choices.splice(0, 1);
-
-    let count = 1;
+    let count = 1; // initialize counter to 1. Counter used for array indexing in the following for-loop
+    // loop through the divElements array
     for(let element of divElements){
-        let randomIndex = Math.floor(Math.random() * choices.length);
-        let choice = choices.splice(randomIndex, 1);
-        element.textContent = choice;
-        console.log(choice);
-        questionsLog[questionsAsked][count] = choice[0];
-        count++;
+        let randomIndex = Math.floor(Math.random() * choices.length); // generate a random number (0-3)
+        let choice = choices.splice(randomIndex, 1); // grab an answer from the choices array using the random number. This will radomize order.
+        element.textContent = choice; // assign the choice to the current divElement
+        // add the choice to the questionLog in the "random" order presented to the user. Used to keep track of which choices were displayed where for reviewing
+        questionsLog[questionsAsked][count] = choice[0]; 
+        count++; // increase the counter
     }
-
-    // store answer in element 5 for questionsLog. Answer is always the first option in the question array (index 1)
+    // store answer in element 5 for questionsLog. Answer is always the first option in the question array (index 1). Since the options in the new
+    // array are different than the triviaQuestions array, the answer is no longer guarenteed to be at index 1, therefore it needs to be added.
     questionsLog[questionsAsked][5] = question[1]
-
+    // loop through the array of div elements and add event listeners
     for (let divElement of divElements) {
         divElement.addEventListener("click", optionSelected);
     } 
-    
-    console.log(questionsLog[questionsAsked])
-    console.log(question[0]);
-
-    for (let i = 0; i < questionsLog.length; i++){
-        console.log(questionsLog[i]);
-    }
-
-    //return question;
 };
 
-// the event handler for the click event of each h2 element
+// the function (event handler) for the click event of each div element
 const optionSelected = evt => {
-    const divElementSelected = evt.currentTarget;              // get the clicked div element
-
-    // create an array of all the p elements within a div inside of main
-    //const divElements = document.querySelectorAll(".triviaGame div");
-
-    $("#previous").removeEventListener("click", previousQuestion);
-
-    // reset all previously selected options
+    const divElementSelected = evt.currentTarget; // get the clicked div element
+    $("#previous").removeEventListener("click", previousQuestion); // remove event listener for previous/back button
+    // reset all previously selected options by changing their class name to an empty string
     for (let element of divElements) {
         element.className = "";
     }
-
-    // highlight the selected option
+    // if the element selected currently has the class name of "selected", set it to the empty string
     if(divElementSelected.className == "selected"){
         divElementSelected.className = "";
-    } else {
+    } else { // otherwise, set it to "selected". This will highlight it yellow
         divElementSelected.className = "selected";
-        console.log(divElementSelected.firstChild.textContent)
     }
-
-    //$("#confirm").disabled = false;
+    // add event listener for the confirm button
     $("#confirm").addEventListener("click", checkForSelectedAnswer);
-    //$("#next").addEventListener("click", nextQuestion);
 };
 
 const checkForSelectedAnswer = () => {
-    // create an array of all the p elements within a div inside of main
-    //const divElements = document.querySelectorAll(".triviaGame div");
-    console.log(question);
-
-    //$("#confirm").disabled = true;
-    $("#confirm").removeEventListener("click", checkForSelectedAnswer);
-
-    // check to see which element has been selected
+    $("#confirm").removeEventListener("click", checkForSelectedAnswer); // remove event listener for the confirm button
+    // check to see which element has been selected by looping through the divElements array
     for (let element of divElements) {
-        element.removeEventListener("click", optionSelected, false);
-        if(element.className == "selected"){
-            console.log(element.textContent);
-            questionsLog[questionsAsked][6] = element.textContent;
-            if (element.textContent == question[1]){
-                element.className = "correct";
-                playerScore++;
-                displayResult(true);
-                setTimeout(showTriviaGame, 2000);
+        element.removeEventListener("click", optionSelected); // remove the event lister for the current div element
+        if(element.className == "selected"){ // if the element is the selected element
+            questionsLog[questionsAsked][6] = element.textContent; // add the user's answer to the question log
+            if (element.textContent == question[1]){ // if the user's answer is the actual answer to the question
+                element.className = "correct"; // change the class name of the element to "correct". This will highlight it green
+                playerScore++; // increment the player's score by 1
+                displayResult(true); // call the displayResult function with a parameter of true
+                setTimeout(showTriviaGame, 2000); // after 2 seconds, call the showTriviaGame function
                 // work around for custom scoreboard font being offset when the score is 1
-                console.log(playerScore);
                 if (playerScore == 1){
                     $("#homeScore p").style.padding = "0 25px 0 0";
                 } else if (playerScore == 10){
@@ -202,14 +160,12 @@ const checkForSelectedAnswer = () => {
                 } else {
                     $("#homeScore p").style.padding = "0px 0px 0px 0px";
                 }
-
-                $("#homeScore p").textContent = playerScore;
-            } else {
-                element.className = "incorrect";
-                incorrectAnswers++;
-                displayResult(false);
-                setTimeout(showTriviaGame, 2000); 
-                console.log(incorrectAnswers);
+                $("#homeScore p").textContent = playerScore; // assign the player's score to the scoreboard
+            } else { // if the user's answer is not the actual answer to the question
+                element.className = "incorrect"; // change the class name to "incorrect". This will highlight it red
+                incorrectAnswers++; // increment the user's number of incorrect answers by 1
+                displayResult(false); // call displayResult with a boolean parameter of false
+                setTimeout(showTriviaGame, 2000); // wait 2 seconds and then call the showTriviaGame function
                 // work around for custom scoreboard font being offset when the score is 1
                 if ((incorrectAnswers == 1) || (incorrectAnswers == 10)){
                     $("#awayScore p").style.padding = "0 25px 0 0";
@@ -217,32 +173,32 @@ const checkForSelectedAnswer = () => {
                 else {
                     $("#awayScore p").style.padding = "0px 0px 0px 0px";
                 }
-                $("#awayScore p").textContent = incorrectAnswers;
+                $("#awayScore p").textContent = incorrectAnswers; // assign the number of incorrect answers to the scoreboard
             }
         }
+        // if the current element holds the answer, but the className is not "correct", set the class name to "answer". This will put a green border around the correct answer.
         if ((element.textContent == question[1]) && !(element.className == "correct")){
             element.className = "answer";
         }
     }
-    // $("#next").disabled = false; // add 'next' event listener
-    $("#next").addEventListener("click", nextQuestion);
-    questionsAsked++;
+    $("#next").addEventListener("click", nextQuestion); // add event lisener for the next button
+    questionsAsked++; // increase the questionsAsked counter by 1
 };
 
-const hideTriviaGame = () => {
-    $(".hidden").className = "reveal";
-    $(".triviaGame").className = "hidden";
-    //$("#result").display.none;
-    $("#resultImage").className = "hidden";
-    $('#reviewQuiz').className = "reviewQuiz";
-    $(".resultText h1").textContent = "Quiz Complete!"
-    $(".resultText h2").textContent = playerScore + " out of " + questionsAsked + " correct!";
-    $(".resultText h3").textContent = playerScore + "/" + questionsAsked + " = " + playerScore/questionsAsked*100 + "%";
-
-    let playerMessage = "";
-    if (playerScore <=2){
+// this function displays the quiz results and shows the "reveal" class on the webpage
+const showQuizResults = () => {
+    $("#reveal").className = "reveal"; // reveal the hidden results page
+    $(".triviaGame").className = "hidden"; // hide the triviaGame div
+    $("#resultImage").className = "hidden"; // hide the resultImage div
+    $('#reviewQuiz').className = "reviewQuiz"; // ensure that reviewQuiz is no longer hidden
+    $(".resultText h1").textContent = "Quiz Complete!" // add text to the h1 element
+    $(".resultText h2").textContent = playerScore + " out of " + questionsAsked + " correct!"; // display user's score to h2 element
+    $(".resultText h3").textContent = playerScore + "/" + questionsAsked + " = " + playerScore/questionsAsked*100 + "%"; // display quiz % to h3
+    let playerMessage = ""; // initialize the playerMessage variable
+    // determining a message to the display based on the player's quiz result
+    if (playerScore <= 2){ 
         playerMessage = "Awful performance. Time to head back to training camp!";
-    } else if (playerScore < 5) {
+    } else if (playerScore < 5) { 
         playerMessage = "Poor performance. Maybe listen to the coach next time!";
     } else if (playerScore == 5){
         playerMessage = "Decent performance, but it could use improvement!"
@@ -253,173 +209,140 @@ const hideTriviaGame = () => {
     } else if (playerScore == 10) {
         playerMessage = "Amazing job! You're on track to make the Hall-of-Fame!"
     }
-
-    $(".resultText h4").textContent = playerMessage;
-
-    $(".resultText p").textContent = "Review Quiz";
-
-    $(".resultText p").addEventListener("click", reviewQuiz);
-    for(let i = 0; i < questionsLog.length; i++){
-        console.log(i + " : " + questionsLog[i]);
-    }
-    
+    $(".resultText h4").textContent = playerMessage; // display the message to the h4 element
+    $("#reviewQuiz").textContent = "Review Quiz"; // display the Review button
+    $("#retakeQuiz").textContent = "Retake Quiz"; // display the Retake button
+    $("#reviewQuiz").addEventListener("click", reviewQuiz); // add event listener for the review button
+    $("#retakeQuiz").addEventListener("click", () => { // if the user wants to retake the quiz, refresh the browser and begin new quiz
+        location.reload();
+    });    
 }
 
+// function that "switches" the website into review mode
 const reviewQuiz = () => {
-    currentQuestion = 0;
-    isReview = true;
-    loadQuestion();
-    $("#next").addEventListener("click", nextQuestion);
-    showTriviaGame();
+    currentQuestion = 0; // set the currentQuestion to 0
+    isReview = true; // set the isReview boolean to true. This indicates "review" mode
+    loadQuestion(); // call the loadQuestion function. This will now load the first question in the quiz
+    $("#next").addEventListener("click", nextQuestion); // add an event listener for the next button
+    showTriviaGame(); // call function to show the trivia game again
 }
 
+// function used to display the trivia game
 const showTriviaGame = () => {
     $("#triviaGame").className = "triviaGame";
-    $("#reveal").className = "hidden";
-    $("#welcome").className = "hidden"  
+    $("#reveal").className = "hidden"; // hide the reveal page
+    $("#welcome").className = "hidden"; // hide the welcome page
 }
 
+// function used to load questions. This is used when navigating previously asked questions or reviewing
 const loadQuestion = () => {
-    //$("#next").disabled = true;
-    //$("#confirm").disabled = true;
-    $("#confirm").removeEventListener("click", checkForSelectedAnswer);
-
-    if(currentQuestion == questionsAsked){
-        $("#next").removeEventListener("click", nextQuestion);
-    } else {
-        $("#next").addEventListener("click", nextQuestion);
+    $("#confirm").removeEventListener("click", checkForSelectedAnswer); // remove event listener for the confirm button
+    if(currentQuestion == questionsAsked){ // if the currentQuestion is the question being asked, prevent moving forward
+        $("#next").removeEventListener("click", nextQuestion); // remove the event listener for the next button
+    } else { // otherwise
+        $("#next").addEventListener("click", nextQuestion); // add the event listner for the next button
     }
-
-    if(currentQuestion == 0){
-        //$("#previous").disabled = true;
-        $("#previous").removeEventListener("click", previousQuestion);
-    } else {
-        //$("#previous").disabled = false;
-        $("#previous").addEventListener("click", previousQuestion);
+    if(currentQuestion == 0){ // if looking at the first question in the quiz
+        $("#previous").removeEventListener("click", previousQuestion); // remove the event lisener for the previous button
+    } else { // if it's not the first question
+        $("#previous").addEventListener("click", previousQuestion); // add an event listener for the previous button
     }
-
-    $("#question").textContent = currentQuestion + 1 + ". " + questionsLog[currentQuestion][0];
-
-    //const divElements = document.querySelectorAll(".triviaGame div");
-    let selection = questionsLog[currentQuestion][6];
-    console.log("Selection: " + selection);
-
-    let count = 1;
-    for(let element of divElements){
-        element.className = "";
-        element.textContent = questionsLog[currentQuestion][count];
-        count++;
+    $("#question").textContent = currentQuestion + 1 + ". " + questionsLog[currentQuestion][0]; // load the question and number into the question div
+    let selection = questionsLog[currentQuestion][6]; // grab the user's selection that was previously assigned to the questions log
+    let count = 1; // initialize this counter to 1. The purpose for this is to skip the question, which is scored at the 1st index
+    for(let element of divElements){ // loop through the div elements of the trivia game
+        element.className = ""; // set the class name to an empty string
+        element.textContent = questionsLog[currentQuestion][count]; // assign the options (multiple choice) as they appeared when first asked
+        count++; // increment counter by 1
     }
-
-    if(selection){ 
-    
-        for(let element of divElements){
-            if (element.textContent == selection){
-                element.className = "selected";
+    if(selection){ // if there is currently a user selected answer logged in the array
+        for(let element of divElements){ // loop through the div elements
+            if (element.textContent == selection){ // if the content of the div elements is equal to the user's selection
+                element.className = "selected"; // assign the class name "selected" to the element
             }
         }
-        let answer = questionsLog[currentQuestion][5]
-        console.log("Answer: " + answer);
-        // check to see which element has been selected
+        let answer = questionsLog[currentQuestion][5] // grab the answer from the questionLog
+        // loop through the divElements again
         for (let element of divElements) {
-            element.removeEventListener("click", optionSelected, false);
-            if(element.className == "selected"){
-                if (element.textContent == answer){
-                    element.className = "correct";
-                } else {
-                    element.className = "incorrect";
+            element.removeEventListener("click", optionSelected); // remove the event listener for each div
+            if(element.className == "selected"){ // if the class name of the element is selected
+                if (element.textContent == answer){ // if the text content of the selected element is equal to the answer
+                    element.className = "correct"; // change the element's classname to "correct"
+                } else { // otherwise
+                    element.className = "incorrect"; // change the element's classname to "incorrect"
                 }
             }
-            if ((element.className != "correct") && (element.textContent == answer)){
-                element.className = "answer";
+            if ((element.className != "correct") && (element.textContent == answer)){ // if the classname is not "correct", but the text content of the div holds the answer
+                element.className = "answer"; // assign the "answer" classname to the div
             }
         }
-    } else {
+    } else { // if the question currently doesn't have a user selected answer
         for (let divElement of divElements) {
-            divElement.addEventListener("click", optionSelected);
+            divElement.addEventListener("click", optionSelected); // add event listeners to each div
         } 
-        //$("#confirm").disabled = true;
-        $("#confirm").removeEventListener("click", checkForSelectedAnswer);
-        $("#next").removeEventListener("click", nextQuestion);
-       // $("#next").disabled = true;
+        $("#confirm").removeEventListener("click", checkForSelectedAnswer); // remove the event listener for the confirm button
+        $("#next").removeEventListener("click", nextQuestion); // remove the event listener for the next button
     }
 }
 
 // these functions had to be moved from the anonymous function created by clicking on the buttons/images. This was done in order to
 // disable the event listeners at certain stages of the trivia game.
 
+// function used to handle the click event of the next button. It moves the trivia game to the next question
 const nextQuestion = () => {
-        // if there are less than 10 questions (counter starts at 0) asked and the current question to be asked has not yet been shown
+        // if there are less than 10 questions asked (counter starts at 0) and the current question to be asked has not yet been shown
         if ((questionsAsked < 10) && (questionsLog[questionsAsked][0] == null)){
             for (let divElement of divElements) {
-                divElement.className = ""
+                divElement.className = "" // remove the classname for each element
             }
-            currentQuestion++;
-            populateTriviaQuestion();
+            currentQuestion++; // increase the currentQuestion counter by one
+            populateTriviaQuestion(); // call the populateTriviaQuestion function to grab a new question
         // if less than 10 questions are asked and the current question has already been shown and entered into the questionsLog
         // or the quiz is being reviewed and not on the 10th question
         } else if (((questionsAsked < 10) && (questionsLog[questionsAsked][0] != null)) || ((isReview) && (currentQuestion != 9))){
-            currentQuestion++;
-            loadQuestion();
+            currentQuestion++; // increase the current question counter by 1
+            loadQuestion(); // call the loadQuestion function to load the question as it was previously shown to the user
         // if 10 questions have been asked and the quiz is not being reviewed
         // or if the quiz is being reviewed and currently on the 10th question, hide the trivia game
         } else if ((!isReview) || ((isReview) && (currentQuestion == 9))){
-            isReview = false;
-            hideTriviaGame();
+            isReview = false; // move out of review mode
+            showQuizResults(); // display the results page
         }
 }
 
+// function used to handle the event when the previous button is clicked
 const previousQuestion = () => {
-    currentQuestion--;
-    loadQuestion();
+    currentQuestion--; // decrease the currentQuestion counter by 1
+    loadQuestion(); // call the loadQuestion function
 }
 
 // function that changes the display after each question is answered to tell user whether they're correct or not. Accepts a boolean parameter
 const displayResult = isCorrect => {
-    $(".hidden").className = "reveal";
-    $(".triviaGame").className = "hidden";
+    $("#reveal").className = "reveal"; // reveal the hidden page
+    $("#triviaGame").className = "hidden"; // hide the trivia page
     
-    if(isCorrect){
-        $("#result").src = goal;
+    if(isCorrect){ // if the user's answer is correct
+        $("#result").src = goal; // display the image corresponding to having a correct answer
         $(".resultText h1").textContent = "Correct!";
-        //$(".reveal").firstChild.nextElementSibling.nextElementSibling.textContent = "Correct!";
     } else {
-        $("#result").src = noGoal;        
+        $("#result").src = noGoal; // display the image corresponding to having an incorrect answer
         $(".resultText h1").textContent = "Incorrect!";
-        //$(".reveal").firstChild.nextElementSibling.nextElementSibling.textContent = "Incorrect!";
     }
-
-    //$(".reveal").appendChild(document.createElement("br"));
-    //$(".reveal").appendChild(textToDisplay);
-
-    //$("#result").display.none;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    populateTriviaQuestion();
-    //const divElements = document.querySelectorAll(".triviaGame div");
-
-    //$("#next").addEventListener("click", nextQuestion);
-
-    //$("#previous").addEventListener("click", previousQuestion);
-
-    // event handler for the confirm button
-    //$("#confirm").addEventListener("click", checkForSelectedAnswer);
-
-    $("#reveal").className = "hidden";
-    $("#triviaGame").className = "hidden";
-    $('.reviewQuiz').className = "hidden";
-
-    //$("#welcome").className = "hidden";
-
-
-
-    $("#startQuiz").addEventListener("click", showTriviaGame);
-
-    // initialize scoreboard
+    questionCount = 10 - questionsRemaining; // calculate the question count. This should be 0 for scoreboard display
+    $("#qrDisplay p").textContent = questionCount; // assign value of questionCount to the scoreboard
+    $("#reveal").className = "hidden"; // hide the reveal page
+    $("#triviaGame").className = "hidden"; // hide the trivia game
+    $('.reviewQuiz').className = "hidden"; // hide the reviewQuiz class
+    $("#startQuiz").addEventListener("click", () => { // add event listener to the start quiz button
+        populateTriviaQuestion(); // populate the first trivia question
+        showTriviaGame(); // show the trivia game
+    });
+    // initialize scoreboard. Both values will be 0 at this point
     $("#awayScore p").textContent = incorrectAnswers;
-    $("#homeScore p").textContent = playerScore;
-      
+    $("#homeScore p").textContent = playerScore;    
     // attach event handler for each div tag	    
     for (let divElement of divElements) {
         divElement.addEventListener("click", optionSelected);

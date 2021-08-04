@@ -1,121 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hockey Trivia</title>
-    <link rel="stylesheet" href="normalize.css">
-    <link rel="stylesheet" href="trivia.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hockey Trivia</title>
+        <link rel="stylesheet" href="normalize.css">
+        <link rel="stylesheet" href="trivia.css">
+        <link rel="icon" type="image/png" href="images/favicon.png">
+    </head>
 
-<body>
-    <header>
-        <div>
-            <img src="images/banner.png">
-        </div>
-        
-        <div class="scoreboard">
-            <div class="scoreInfo">
-                <div class="homeTeam">
-                    <div class="teamLabel" id="homeLabel">
-                        CORRECT
+    <body>
+        <header>
+            <div class="logo">
+                <img src="images/banner.png">
+            </div>
+            <div class="scoreboard">
+                <div class="scoreInfo">
+                    <div class="homeTeam">
+                        <div class="teamLabel" id="homeLabel">
+                            CORRECT
+                        </div>
+                        <div class="teamScore" id="homeScore">
+                            <p></p>
+                        </div>
                     </div>
-                    <div class="teamScore" id="homeScore">
-                        <p></p>
+                    <div class="questionsRemaining">
+                        <div class="qrLabel">
+                            Q#
+                        </div>
+                        <div class="qrDisplay" id="qrDisplay">
+                            <p></p>
+                        </div>
+                    </div>
+                    <div class="awayTeam">
+                        <div class="teamLabel" id="awayLabel">
+                            INCORRECT
+                        </div>
+                        <div class="teamScore" id="awayScore">
+                            <p></p>
+                        </div>
                     </div>
                 </div>
-                <div class="questionsRemaining">
-                    <div class="qrLabel">
-                        Q#
-                    </div>
-                    <div class="qrDisplay" id="qrDisplay">
-                        <p></p>
+            </div>
+        </header>
+        <aside id="leftSide">
+            <img src="images/spotlightStandingFlipped.png">
+        </aside>
+        <main id="triva">
+            <div class="reveal" id="reveal">
+                <div class="resultImage" id="resultImage">
+                    <img id="result" src="images/goal.gif" alt="images/no-goal.gif" >
+                </div>
+                <div class="resultText">
+                    <h1>Incorrect</h1>
+                    <h2></h2>
+                    <h3></h3>
+                    <h4></h4>
+                    <div class="reviewButtons">
+                        <p class="reviewQuiz" id="reviewQuiz"></p>
+                        <p class="retakeQuiz" id="retakeQuiz"></p>
                     </div>
                 </div>
-                <div class="awayTeam">
-                    <div class="teamLabel" id="awayLabel">
-                        INCORRECT
-                    </div>
-                    <div class="teamScore" id="awayScore">
-                        <p></p>
-                    </div>
+            </div>
+            <div class="welcome" id="welcome">
+                <h1>Welcome to Hockey Trivia</h1>
+                <div id="rules">
+                    <h2>Instructions:</h2>
+                    <ul>
+                        <li>There will be a total of 10 randomly selected questions</li>
+                        <li>Choose an answer by clicking on an option below the question</li>
+                        <li>Selected options will be indicted by changing to yellow</li>
+                        <li>Selections can be changed before clicking the confirm button</li>
+                        <li>Selections will either turn green (correct) or red (incorrect)</li>
+                        <li>If selection is incorrect, correct answer will have green border</li>
+                        <li>Once 10 questions have been answered, your overall score will be shown</li>
+                    </ul>
+                </div>
+                <div id="startQuiz">
+                    <p>Start Quiz</p>
                 </div>
             </div>
-        </div>
-    </header>
-    <aside id="leftSide">
-        <img src="images/spotlightStandingFlipped.png">
-    </aside>
-    <main id="triva">
-        <div class="reveal" id="reveal">
-            <div class="resultImage" id="resultImage">
-                <img id="result" src="images/goal.gif" alt="images/no-goal.gif" >
+            <div class="triviaGame" id="triviaGame">
+                <div id="triviaQuestion">
+                    <h3 id="question"></h3>
+                </div>
+                <div id="optionA" class=".option">
+                    
+                </div>
+                <div id="optionB" class=".option">
+                    
+                </div>
+                <div id="optionC" class=".option">
+                    
+                </div>
+                <div id="optionD" class=".option">
+                    
+                </div>
+                <div id="message">
+                    <img src="images/arrowBack.png" id="previous" alt="Back">
+                    <img src="images/confirm.png" id="confirm" alt="Confirm">
+                    <img src="images/arrowProceed.png" id="next" alt="Next">
+                </div>
             </div>
-            <div class="resultText">
-                <h1>Incorrect</h1>
-                <h2></h2>
-                <h3></h3>
-                <h4></h4>
-                <p class="reviewQuiz" id="reviewQuiz"></p>
-            </div>
-        </div>
-        <div class="welcome" id="welcome">
-            <h1>Welcome to Hockey Trivia</h1>
-            <div id="rules">
-                <h2>Rules/Instructions:</h2>
-                <ul>
-                    <li>There will be a total of 10 randomly selected questions</li>
-                    <li>To select an answer, click an option and then click the confirm button below</li>
-                    <li>Once an option is selected, it will turn yellow to indicate the selection</li>
-                    <li>You may only change your selection prior to clicking the confirm button</li>
-                    <li>Once a selection is confirmed, it will either turn green (correct) or red (incorrect)</li>
-                    <li>If you select the incorrect answer, the correct answer will be displayed with a green border</li>
-                    <li>You can check previously answered questions by using the back arrow below the quiz</li>
-                    <li>Once 10 questions have been answered, your overall score will be shown</li>
-                
-                </ul>
-            </div>
-            <div id="startQuiz">
-                <p>Start Quiz</p>
-            </div>
-        </div>
-        <div class="triviaGame" id="triviaGame">
-            <div id="triviaQuestion">
-                <h3 id="question"></h3>
-            </div>
-            <div id="optionA" class=".option">
-                
-            </div>
-            <div id="optionB" class=".option">
-                
-            </div>
-            <div id="optionC" class=".option">
-                
-            </div>
-            <div id="optionD" class=".option">
-                
-            </div>
-            <div id="message">
-                <!--<input type="button" id="previous" value="Previous">-->
-                <img src="images/arrowBack.png" id="previous" alt="Back">
-                <!--<input type="button" id="confirm" value="Confirm">-->
-                <img src="images/confirm.png" id="confirm" alt="Confirm">
-                <img src="images/arrowProceed.png" id="next" alt="Next">
-               <!--<input type="button" id="next" value="Next Question">-->
-            </div>
-        </div>
-    </main>
-    <aside id="rightSide">
-        <img src="images/spotlightStanding.png">
-    </aside>
-    <footer>
-        <img src="images/spotlightFloorFlipped.png">
-        <img src="images/spotlightFloorFlipped.png">
-        <img src="images/spotlightFloorFlipped.png">
-        <img src="images/spotlightFloor.png">
-        <img src="images/spotlightFloor.png">
-        <img src="images/spotlightFloor.png">
-    </footer>
-    <script src="trivia.js"></script>
-</body>
+        </main>
+        <aside id="rightSide">
+            <img src="images/spotlightStanding.png">
+        </aside>
+        <footer>
+            <img id="spotlight1" class="spotlight" src="images/spotlightFloorFlipped.png">
+            <img id="spotlight2" class="spotlight" src="images/spotlightFloorFlipped.png">
+            <img id="spotlight3" class="spotlight" src="images/spotlightFloorFlipped.png">
+            <img id="spotlight4" class="spotlight" src="images/spotlightFloor.png">
+            <img id="spotlight5" class="spotlight" src="images/spotlightFloor.png">
+            <img id="spotlight6" class="spotlight" src="images/spotlightFloor.png">
+        </footer>
+        <script src="trivia.js"></script>
+    </body>
 </html>
