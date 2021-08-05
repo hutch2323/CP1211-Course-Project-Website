@@ -49,11 +49,11 @@ const triviaQuestions = [["Who scored the very first goal in NHL history?", "Dav
                         ["What team holds the record for the most shots on goal in one game?", "Boston Bruins", "Washington Capitals", "Edmonton Oilers", "Montreal Canadiens"],
                         ["What team was forced to leave the league after its arena burned down after six games in the NHL's first season?", "Montreal Wanderers", "Vancouver Millionaires", "Seattle Metropolitans", "Quebec Bulldogs"],
                         ["Which 1960s NHL player first made waving to the crowd at centre ice popular after receiving a star of the game?", "Johnny Bower", "Jean Beliveau", "Gump Worsley", "Eddie Shack"],
-                        ["What was the format for the first ever NHL All-Star Game?", "Toronto Maple Leafs vs NHL All Stars", "Whales vs Campbell", "East vs West", "North America vs World"],
+                        ["What was the format for the first ever NHL All-Star Game?", "Toronto Maple Leafs vs NHL All Stars", "Wales vs Campbell", "East vs West", "North America vs World"],
                         ["Over his career, how many goals did goaltender Ron Hextall score?", "2", "1", "0", "3"],
                         ["Which NHL player was the first to begin curving their stick blade?", "Stan Mikita", "Bobby Hull", "Gordie Howe", "Yvan Cournoyer"],
                         ["Who had the second most points throughout the 80s, behind Wayne Gretzky?", "Peter Stastny", "Mark Messier", "Mike Bossy", "Mario Lemieux"],
-                        ["Which player was responsible for pushing for the NHL player's association", "Ted Lindsay", "Gordie Howe", "Serge Savard", "Maurice Richard"]];
+                        ["Which player was responsible for pushing for the NHL player's association?", "Ted Lindsay", "Gordie Howe", "Serge Savard", "Maurice Richard"]];
 
 let question = []; // array used to hold the current question
 let playerScore = 0; // variable used to hold the number of correct answers
@@ -63,8 +63,9 @@ let currentQuestion = 0; // variable used to hold the number of the current ques
 let questionsLog = [[], [], [], [], [], [], [], [], [], []]; // array used to hold the questions that have been previously asked during the quiz
 let questionsRemaining = 10; // variable used to hold the number of questions to be asked that are remaining. Initialized to 10
 let questionCount = 0; // variable that holds the number of questions asked to display on the scoreboard
-const goal = $("#result").src; // variable used to hold the .gif file that plays when user gets a correct answer
-const noGoal = $("#result").alt; // variable used to hold the .gif file that plays when user guesses the wrong answe
+let goal; // variable used to hold the .gif file that plays when user gets a correct answer
+let noGoal; // variable used to hold the .gif file that plays when user guesses the wrong answer
+const imageCache = []; // array to hold the cached images for the goal/no goal referee gifs
 let isReview = false; // boolean variable used when the user reviews their quiz. Set to false if not "reviewing"
 
 // set up an array of all div elements within the trivia game that are used for the trivia answers. 
@@ -347,4 +348,11 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let divElement of divElements) {
         divElement.addEventListener("click", optionSelected);
     }    
+    // process and pre-load images
+    goal = $("#result").src;
+    noGoal = $("#result").alt;
+    const hiddenImage = new Image(); // preload the image stored in id (hidden no goal image)
+    hiddenImage.src = $("#result").alt; // assign the id of the current image as the src of the hidden image
+    hiddenImage.alt = $("#result").src; // assign the src of the current image as the id of the hidden image
+    imageCache[imageCache.length] = hiddenImage; // add hidden image to array to cache it
 });
