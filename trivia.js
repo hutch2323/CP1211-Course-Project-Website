@@ -6,7 +6,7 @@ const $ = selector => document.querySelector(selector);
 // 2D array used to hold all of the trivia questions. The answer to each question is stored in the 2nd index of that array
 const triviaQuestions = [["Who scored the very first goal in NHL history?", "Dave Ritchie", "Harry Hyland", "Joe Malone", "Eddie Gerard"],
                         ["Who was the first NHL commissioner?", "Gary Bettman", "Red Dutton", "Frank Calder", "Clarence Campbell"],
-                        ["Who roared to NHL stardom as \"the Golden Jet\"?", "Bobby Hull", "Bobby Orr", "Gordie Howe", "Wayne Gretzky"],
+                        ["Who roared to NHL stardom as \"The Golden Jet\"?", "Bobby Hull", "Bobby Orr", "Gordie Howe", "Wayne Gretzky"],
                         ["What was the first NHL team to win back-to-back Stanley Cup titles?", "Ottawa Senators", "New York Rangers", "Vancouver Millionaires", "Montreal Canadiens"],
                         ["What year was the offsides rule introduced by the NHL?", "1930", "1950", "1970", "1990"],
                         ["Who was the fastest player in NHL history to reach 1,000 career points?", "Wayne Gretzky", "Mario Lemieux", "Sidney Crosby", "Gordie Howe"],
@@ -19,7 +19,7 @@ const triviaQuestions = [["Who scored the very first goal in NHL history?", "Dav
                         ["In 1993, Kris Draper was traded to the Detroit Red Wings for ____.", "$1", "$100", "Future Considerations", "A bucket of pucks"],
                         ["Who is the only NHL player that was suspended for life?", "Billy Coutu", "Marty McSorley", "Todd Bertuzzi", "Tiger Williams"],
                         ["Which No. 1 overall draft pick refused to play for Quebec Nordiques?", "Eric Lindros", "Mats Sundin", "Owen Nolan", "Alexandre Daigle"],
-                        ["How many different Minnesota North Stars players scored goals against the Winnipeg Jets on November 11, 1981", "11", "12", "10", "9"],
+                        ["How many different Minnesota North Stars players scored goals against the Winnipeg Jets on November 11, 1981?", "11", "12", "10", "9"],
                         ["Who is the youngest NHL captain to ever hoist the Stanley Cup?", "Sidney Crosby", "Jonathan Toews", "Mario Lemieux", "Wayne Gretzky"],
                         ["Which player won NHL Rookie of the Year at age 31?", "Sergei Makarov", "Bob Barlow", "Ken Dryden", "Evgeni Nabokov"],
                         ["Who is the oldest man ever to coach an NHL game?", "Al Arbour", "Art Ross", "Glen Sather", "Scotty Bowman"],
@@ -40,7 +40,7 @@ const triviaQuestions = [["Who scored the very first goal in NHL history?", "Dav
                         ["How many goaltenders played for the Vancouver Canucks between Kirk McLean's departure in 1998 and Roberto Luongo's arrival in 2006?", "18", "20", "16", "14"],
                         ["What did Florida Panthers fans throw on the ice during the 1995-96 season?", "Rats", "Snakes", "Catfish", "Lobsters"],
                         ["Which player holds the NHL single-season record for shooting percentage?", "Charlie Simmer", "Craig Simpson", "Alexander Ovechkin", "Sergei Federov"],
-                        ["What's the most goals scored in a season by a rookie", "76", "78", "74", "72"],
+                        ["What's the most goals scored in a season by a rookie?", "76", "78", "74", "72"],
                         ["Who holds the record for the most Stanley Cups as a player?", "Henri Richard", "Wayne Gretzky", "Guy Lafleur", "Brian Trottier"],
                         ["Who is the only player to score five goals five different ways in one game?", "Mario Lemieux", "Wayne Gretzky", "Sidney Crosby", "Gordie Howe"],
                         ["Who was the first goalie to be credited with a goal in NHL history?", "Billy Smith", "Grant Fuhr", "Ron Hextall", "Andy Moog"],
@@ -319,9 +319,6 @@ const previousQuestion = () => {
 
 // function that changes the display after each question is answered to tell user whether they're correct or not. Accepts a boolean parameter
 const displayResult = isCorrect => {
-    $("#reveal").className = "reveal"; // reveal the hidden page
-    $("#triviaGame").className = "hidden"; // hide the trivia page
-    
     if(isCorrect){ // if the user's answer is correct
         $("#result").src = goal; // display the image corresponding to having a correct answer
         $(".resultText h1").textContent = "Correct!";
@@ -329,6 +326,8 @@ const displayResult = isCorrect => {
         $("#result").src = noGoal; // display the image corresponding to having an incorrect answer
         $(".resultText h1").textContent = "Incorrect!";
     }
+    $("#reveal").className = "reveal"; // reveal the hidden page
+    $("#triviaGame").className = "hidden"; // hide the trivia page
 }
 
 document.addEventListener("DOMContentLoaded", () => {
